@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perpustakaan Digital — Sistem Modern</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=DM+Sans:wght@400;500;600&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --primary: #1a1a2e;
+            --secondary: #16213e;
+            --accent: #ff6b6b;
+            --accent-light: #ff8787;
+            --accent-glow: rgba(255, 107, 107, 0.3);
+            --text: #e8e8e8;
+            --text-muted: #a0a0a0;
+            --success: #51cf66;
+            --warning: #ffd43b;
+            --danger: #ff6b6b;
+            --card-bg: #252545;
+            --card-hover: #2d2d52;
+            --border: rgba(255, 255, 255, 0.1);
+            --shadow: rgba(0, 0, 0, 0.3);
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            background-attachment: fixed;
+            color: var(--text);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated background particles */
+        body::before {
+            content: '';
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(255, 107, 107, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(81, 207, 102, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(255, 212, 59, 0.03) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Navigation */
+        nav {
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 0;
+            display: flex;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+            animation: slideDown 0.5s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .nav-brand {
+            padding: 20px 40px;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5em;
+            font-weight: 800;
+            color: var(--accent);
+            border-right: 1px solid var(--border);
+            letter-spacing: -0.5px;
+        }
+
+        .nav-brand span {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .nav-links {
+            display: flex;
+            flex: 1;
+            padding: 0 20px;
+        }
+
+        nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 25px 30px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            font-size: 0.95em;
+            letter-spacing: 0.3px;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 3px;
+            background: var(--accent);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateX(-50%);
+        }
+
+        nav a:hover {
+            color: var(--text);
+            background: rgba(255, 107, 107, 0.05);
+        }
+
+        nav a.active {
+            color: var(--accent);
+            background: rgba(255, 107, 107, 0.08);
+        }
+
+        nav a.active::after {
+            width: 60%;
+        }
+
+        /* Container */
+        .container {
+            padding: 50px 60px;
+            max-width: 1600px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Page Header */
+        .page-header {
+            margin-bottom: 40px;
+            animation: fadeInUp 0.6s ease-out 0.2s both;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .page-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3em;
+            font-weight: 800;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1px;
+        }
+
+        .page-header p {
+            color: var(--text-muted);
+            font-size: 1.1em;
+            font-weight: 400;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px var(--shadow);
+            margin-bottom: 40px;
+            border: 1px solid var(--border);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: scaleIn 0.5s ease-out;
+            backdrop-filter: blur(10px);
+        }
+
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 70px var(--shadow);
+            border-color: rgba(255, 107, 107, 0.2);
+        }
+
+        /* Tables */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        th {
+            background: rgba(255, 107, 107, 0.1);
+            color: var(--accent-light);
+            padding: 18px 20px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px solid var(--accent);
+        }
+
+        th:first-child { border-radius: 12px 0 0 0; }
+        th:last-child { border-radius: 0 12px 0 0; }
+
+        td {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+        }
+
+        tr {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        tbody tr:hover {
+            background: var(--card-hover);
+            transform: scale(1.01);
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        tbody tr:last-child td:first-child { border-radius: 0 0 0 12px; }
+        tbody tr:last-child td:last-child { border-radius: 0 0 12px 0; }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: 'DM Sans', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:active::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn:disabled {
+            background: rgba(160, 160, 160, 0.2) !important;
+            cursor: not-allowed;
+            color: var(--text-muted) !important;
+            box-shadow: none !important;
+        }
+
+        .btn-borrow {
+            background: linear-gradient(135deg, var(--success) 0%, #38d05e 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(81, 207, 102, 0.3);
+        }
+
+        .btn-borrow:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(81, 207, 102, 0.5);
+        }
+
+        .btn-edit {
+            background: linear-gradient(135deg, var(--warning) 0%, #ffec3e 100%);
+            color: #1a1a2e;
+            box-shadow: 0 4px 15px rgba(255, 212, 59, 0.3);
+            margin-right: 8px;
+        }
+
+        .btn-edit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(255, 212, 59, 0.5);
+        }
+
+        .btn-delete {
+            background: linear-gradient(135deg, var(--danger) 0%, #ff5252 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .btn-delete:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(255, 107, 107, 0.5);
+        }
+
+        .btn-save {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+            color: white;
+            width: 100%;
+            padding: 16px;
+            margin-top: 20px;
+            font-size: 1em;
+            box-shadow: 0 8px 25px var(--accent-glow);
+        }
+
+        .btn-save:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px var(--accent-glow);
+        }
+
+        .btn-cancel {
+            background: rgba(160, 160, 160, 0.2);
+            color: var(--text);
+            width: 100%;
+            margin-top: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .btn-cancel:hover {
+            background: rgba(160, 160, 160, 0.3);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Form */
+        .form-section {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+        }
+
+        .form-section h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8em;
+            margin-bottom: 25px;
+            color: var(--accent-light);
+            font-weight: 700;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--text);
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            box-sizing: border-box;
+            background: rgba(0, 0, 0, 0.3);
+            color: var(--text);
+            font-size: 1em;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: rgba(0, 0, 0, 0.4);
+            box-shadow: 0 0 0 4px var(--accent-glow);
+        }
+
+        /* Badge */
+        .badge {
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 0.85em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-block;
+        }
+
+        .badge-success {
+            background: linear-gradient(135deg, var(--success) 0%, #38d05e 100%);
+            color: white;
+            box-shadow: 0 2px 8px rgba(81, 207, 102, 0.3);
+        }
+
+        .badge-danger {
+            background: linear-gradient(135deg, var(--danger) 0%, #ff5252 100%);
+            color: white;
+            box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
+        }
+
+        /* Admin Layout */
+        .admin-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 40px;
+            margin-bottom: 50px;
+        }
+
+        @media (max-width: 1200px) {
+            .admin-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8em;
+            margin-bottom: 25px;
+            color: var(--text);
+            font-weight: 700;
+        }
+
+        .coords-link {
+            color: var(--accent-light);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .coords-link:hover {
+            color: var(--accent);
+            transform: translateX(3px);
+        }
+
+        .divider {
+            margin: 60px 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border), transparent);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Icon styling */
+        .icon {
+            display: inline-block;
+            margin-right: 8px;
+            font-size: 1.2em;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container { padding: 30px 20px; }
+            .card { padding: 25px; }
+            .page-header h1 { font-size: 2em; }
+            nav { flex-direction: column; }
+            .nav-brand { border-right: none; border-bottom: 1px solid var(--border); }
+            .nav-links { flex-direction: column; width: 100%; }
+            nav a { padding: 15px 20px; }
+            .table-container { border-radius: 8px; }
+        }
+
+        /* Loading animation */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .loading {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="nav-brand">
+            <span class="icon">📚</span>Library<span>Hub</span>
+        </div>
+        <div class="nav-links">
+            <a id="nav-user" onclick="showPage('user')" class="active">
+                <span class="icon">👤</span> Dashboard User
+            </a>
+            <a id="nav-admin" onclick="showPage('admin')">
+                <span class="icon">⚙️</span> Admin Panel
+            </a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- USER PAGE -->
+        <div id="page-user">
+            <div class="page-header">
+                <h1>Koleksi Buku</h1>
+                <p>Jelajahi dan pinjam buku dari perpustakaan digital kami</p>
+            </div>
+            
+            <div class="card">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Judul Buku</th>
+                                <th>Penulis</th>
+                                <th>Ketersediaan</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="list-user"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ADMIN PAGE -->
+        <div id="page-admin" class="hidden">
+            <div class="page-header">
+                <h1>Panel Admin</h1>
+                <p>Kelola koleksi buku dan monitor peminjaman</p>
+            </div>
+
+            <div class="admin-grid">
+                <div class="form-section">
+                    <h3 id="form-title">Tambah Buku Baru</h3>
+                    <input type="hidden" id="edit-id">
+                    <div class="form-group">
+                        <label>Judul Buku</label>
+                        <input type="text" id="title" placeholder="Masukkan judul buku">
+                    </div>
+                    <div class="form-group">
+                        <label>Penulis</label>
+                        <input type="text" id="author" placeholder="Masukkan nama penulis">
+                    </div>
+                    <div class="form-group">
+                        <label>Stok</label>
+                        <input type="number" id="stock" placeholder="Jumlah stok">
+                    </div>
+                    <button class="btn btn-save" onclick="saveBook()">
+                        <span class="icon">💾</span> Simpan Buku
+                    </button>
+                    <button id="btn-cancel" class="btn btn-cancel hidden" onclick="resetForm()">
+                        <span class="icon">✕</span> Batal
+                    </button>
+                </div>
+
+                <div>
+                    <h3 class="section-title">Inventory Buku</h3>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Judul Buku</th>
+                                    <th>Stok</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="list-inventory"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="card">
+                <h3 class="section-title">
+                    <span class="icon">🕒</span> Riwayat Peminjaman & Lokasi User
+                </h3>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>User ID</th>
+                                <th>Buku</th>
+                                <th>Waktu Pinjam</th>
+                                <th>Lokasi (Lat, Long)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="list-logs"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- NAVIGASI ---
+        function showPage(page) {
+            document.getElementById('page-user').classList.toggle('hidden', page !== 'user');
+            document.getElementById('page-admin').classList.toggle('hidden', page !== 'admin');
+            document.getElementById('nav-user').classList.toggle('active', page === 'user');
+            document.getElementById('nav-admin').classList.toggle('active', page === 'admin');
+            
+            fetchBooks();
+            if(page === 'admin') fetchLogs();
+        }
+
+        // --- AMBIL DATA BUKU ---
+        async function fetchBooks() {
+            try {
+                const res = await fetch('/api/books');
+                const books = await res.json();
+                
+                const listUser = document.getElementById('list-user');
+                const listInv = document.getElementById('list-inventory');
+                listUser.innerHTML = '';
+                listInv.innerHTML = '';
+
+                books.forEach(b => {
+                    const isAvailable = b.stock > 0;
+                    listUser.innerHTML += `<tr>
+                        <td><strong>#${b.id}</strong></td>
+                        <td><strong>${b.title}</strong></td>
+                        <td>${b.author}</td>
+                        <td><span class="badge ${isAvailable ? 'badge-success' : 'badge-danger'}">${b.stock} Tersedia</span></td>
+                        <td><button class="btn btn-borrow" ${!isAvailable ? 'disabled' : ''} onclick="borrowBook(${b.id})">${isAvailable ? '📖 Pinjam' : '❌ Habis'}</button></td>
+                    </tr>`;
+
+                    listInv.innerHTML += `<tr>
+                        <td><strong>${b.title}</strong></td>
+                        <td><span class="badge badge-success">${b.stock}</span></td>
+                        <td>
+                            <button class="btn btn-edit" onclick='fillForm(${JSON.stringify(b)})'>✏️ Edit</button>
+                            <button class="btn btn-delete" onclick="deleteBook(${b.id})">🗑️ Hapus</button>
+                        </td>
+                    </tr>`;
+                });
+            } catch (err) { console.error("Error:", err); }
+        }
+
+        // --- AMBIL LOG ---
+        async function fetchLogs() {
+            try {
+                const res = await fetch('/api/borrow', { headers: { 'x-user-role': 'admin' } });
+                const logs = await res.json();
+                const list = document.getElementById('list-logs');
+                list.innerHTML = '';
+
+                logs.forEach(l => {
+                    list.innerHTML += `<tr>
+                        <td><strong>User ${l.userId}</strong></td>
+                        <td>${l.Book ? l.Book.title : 'ID Buku: ' + l.bookId}</td>
+                        <td>${new Date(l.borrowDate).toLocaleString('id-ID')}</td>
+                        <td><a href="https://www.google.com/maps?q=${l.latitude},${l.longitude}" target="_blank" class="coords-link">${l.latitude.toFixed(4)}, ${l.longitude.toFixed(4)} 📍</a></td>
+                    </tr>`;
+                });
+            } catch (err) { console.error("Error logs:", err); }
+        }
+
+        // --- PINJAM BUKU (ANTI-GAGAL) ---
+        async function borrowBook(bookId) {
+            const executeBorrow = async (lat, lng) => {
+                try {
+                    const response = await fetch('/api/borrow', {
+                        method: 'POST',
+                        headers: { 
+                            'Content-Type': 'application/json', 
+                            'x-user-role': 'user',
+                            'x-user-id': '99'
+                        },
+                        body: JSON.stringify({ bookId, latitude: lat, longitude: lng })
+                    });
+                    const result = await response.json();
+                    if (response.ok) {
+                        alert("✅ Sukses! " + result.message);
+                        await fetchBooks();
+                    } else {
+                        alert("❌ Gagal: " + result.message);
+                    }
+                } catch (err) { alert("❌ Kesalahan server."); }
+            };
+
+            // Coba ambil lokasi asli
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => executeBorrow(pos.coords.latitude, pos.coords.longitude),
+                    (err) => {
+                        console.warn("Izin lokasi ditolak/gagal, menggunakan koordinat default.");
+                        executeBorrow(-6.2000, 106.8166); 
+                    },
+                    { timeout: 3000 }
+                );
+            } else {
+                executeBorrow(-6.2000, 106.8166);
+            }
+        }
+
+        // --- CRUD ADMIN ---
+        async function saveBook() {
+            const id = document.getElementById('edit-id').value;
+            const data = {
+                title: document.getElementById('title').value,
+                author: document.getElementById('author').value,
+                stock: parseInt(document.getElementById('stock').value)
+            };
+            const url = id ? `/api/books/${id}` : '/api/books';
+            const res = await fetch(url, {
+                method: id ? 'PUT' : 'POST',
+                headers: { 'Content-Type': 'application/json', 'x-user-role': 'admin' },
+                body: JSON.stringify(data)
+            });
+            if(res.ok) { alert("✅ Data Tersimpan!"); resetForm(); fetchBooks(); }
+        }
+
+        async function deleteBook(id) {
+            if(confirm('❓ Hapus buku ini?')) {
+                await fetch(`/api/books/${id}`, { method: 'DELETE', headers: { 'x-user-role': 'admin' } });
+                alert("✅ Buku berhasil dihapus!");
+                fetchBooks();
+            }
+        }
+
+        function fillForm(b) {
+            document.getElementById('form-title').innerText = "Edit Buku";
+            document.getElementById('edit-id').value = b.id;
+            document.getElementById('title').value = b.title;
+            document.getElementById('author').value = b.author;
+            document.getElementById('stock').value = b.stock;
+            document.getElementById('btn-cancel').classList.remove('hidden');
+        }
+
+        function resetForm() {
+            document.getElementById('form-title').innerText = "Tambah Buku Baru";
+            document.getElementById('edit-id').value = '';
+            document.getElementById('title').value = '';
+            document.getElementById('author').value = '';
+            document.getElementById('stock').value = '';
+            document.getElementById('btn-cancel').classList.add('hidden');
+        }
+
+        fetchBooks();
+    </script>
+</body>
+</html>
